@@ -139,7 +139,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 for successor in problem.getSuccessors(state):
                     (state, action, cost) = successor
 
-                    fringe.push((state, action, cost, parentcost + cost, breadcrumb), parentcost + cost + heuristic(successor))
+                    fringe.push((state, action, cost, parentcost + cost, breadcrumb), parentcost + cost + heuristic(state, problem))
         else:
             return None
 
