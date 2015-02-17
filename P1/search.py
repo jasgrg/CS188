@@ -86,42 +86,26 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    "*** YOUR CODE HERE ***"
-    fringe = util.Stack()
-    startstate = problem.getStartState()
 
-    fringe.push((startstate, startstate, 0, ""))
-
-    while True:
-        if not fringe.isEmpty():
-            (state, action, cost, breadcrumb) = fringe.pop()
-
-            if action != '' and action != startstate:
-                if breadcrumb != '':
-                    breadcrumb = breadcrumb + "|" + action
-                else:
-                    breadcrumb = action
-
-            if problem.isGoalState(state):
-                return breadcrumb.split('|')
-            #if state not in problem.getExpandedStates():#
-            for successor in problem.getSuccessors(state):
-                (state, action, cost) = successor
-
-                fringe.push((state, action, cost, breadcrumb))
-        else:
-            return None
+    return genericSearch(problem, util.Stack())
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return genericSearch(problem, util.Queue())
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return genericSearch(problem, util.PriorityQueueWithFunction(getCost))
+
+def getCost(state):
+    (state, action, cost, totalcost, breadcrumb) = state
+    return totalcost
+
+def getBackwardAndForwardCost(node):
+    (state, action, cost, totalcost, breadcrumb) = node
+
+    return totalcost + _heuristic(node)
 
 def nullHeuristic(state, problem=None):
     """
@@ -133,7 +117,59 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    expandedStates = []
+    startstate = problem.getStartState()
+    fringe = util.PriorityQueue()
+    fringe.push((startstate, startstate, 0, 0, ""), 0)
+
+    while True:
+        if not fringe.isEmpty():
+            (state, action, cost, parentcost, breadcrumb) = fringe.pop()
+
+            if action != '' and action != startstate:
+                if breadcrumb != '':
+                    breadcrumb = breadcrumb + "|" + action
+                else:
+                    breadcrumb = action
+
+            if problem.isGoalState(state):
+                return breadcrumb.split('|')
+            if state not in expandedStates:
+                expandedStates.append(state)
+                for successor in problem.getSuccessors(state):
+                    (state, action, cost) = successor
+
+                    fringe.push((state, action, cost, parentcost + cost, breadcrumb), parentcost + cost + heuristic(successor))
+        else:
+            return None
+
+
+def genericSearch(problem, fringe):
+    expandedStates = []
+    startstate = problem.getStartState()
+
+    fringe.push((startstate, startstate, 0, 0, ""))
+
+    while True:
+        if not fringe.isEmpty():
+            (state, action, cost, parentcost, breadcrumb) = fringe.pop()
+
+            if action != '' and action != startstate:
+                if breadcrumb != '':
+                    breadcrumb = breadcrumb + "|" + action
+                else:
+                    breadcrumb = action
+
+            if problem.isGoalState(state):
+                return breadcrumb.split('|')
+            if state not in expandedStates:
+                expandedStates.append(state)
+                for successor in problem.getSuccessors(state):
+                    (state, action, cost) = successor
+
+                    fringe.push((state, action, cost, parentcost + cost, breadcrumb))
+        else:
+            return None
 
 
 # Abbreviations
