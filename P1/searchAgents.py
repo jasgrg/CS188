@@ -468,8 +468,20 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return len(foodGrid.asList())
+    list = foodGrid.asList()
+    maxdist = 0
+
+    for x, y in list:
+        dist = util.manhattanDistance((position), (x, y))
+        if dist > maxdist:
+            maxdist = dist
+        for x2, y2 in list:
+            dist = util.manhattanDistance((x, y), (x2, y2))
+            if dist > maxdist:
+                maxdist = dist
+    return maxdist
+
+    return len(list)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -498,10 +510,16 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        closestx, closesty = startPosition
+        mindist = 0
+        for x, y in food.asList():
+            dist = util.manhattanDistance(startPosition, (x, y)) #mazeDistance(startPosition, (x, y))
+            if mindist == 0 or dist < mindist:
+                mindist = dist
+                closestx = x
+                closesty = y
+        prob = PositionSearchProblem(gameState, start=startPosition, goal=(closestx, closesty), warn=False, visualize=False)
+        return search.bfs(prob)
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
     A search problem for finding a path to any food.
