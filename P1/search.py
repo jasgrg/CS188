@@ -102,11 +102,6 @@ def getCost(state):
     (state, action, cost, totalcost, breadcrumb) = state
     return totalcost
 
-def getBackwardAndForwardCost(node):
-    (state, action, cost, totalcost, breadcrumb) = node
-
-    return totalcost + _heuristic(node)
-
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -148,13 +143,13 @@ def genericSearch(problem, fringe):
     expandedStates = []
     startstate = problem.getStartState()
 
-    fringe.push((startstate, startstate, 0, 0, ""))
+    fringe.push((startstate, "", 0, 0, ""))
 
     while True:
         if not fringe.isEmpty():
             (state, action, cost, parentcost, breadcrumb) = fringe.pop()
 
-            if action != '' and action != startstate:
+            if action != '':
                 if breadcrumb != '':
                     breadcrumb = breadcrumb + "|" + action
                 else:
