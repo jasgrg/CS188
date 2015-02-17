@@ -88,17 +88,27 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     fringe = util.Stack()
-    startState = problem.getStartState()
+    startstate = problem.getStartState()
 
-    fringe.push((startState, startState, 0))
+    fringe.push((startstate, startstate, 0, ""))
 
     while True:
         if not fringe.isEmpty():
-            (state, action, cost) = fringe.pop()
+            (state, action, cost, breadcrumb) = fringe.pop()
+
+            if action != '' and action != startstate:
+                if breadcrumb != '':
+                    breadcrumb = breadcrumb + "|" + action
+                else:
+                    breadcrumb = action
+
             if problem.isGoalState(state):
-                return state
-            for (state, action, cost) in problem.getSuccessors(state):
-                fringe.push(state)
+                return breadcrumb.split('|')
+            #if state not in problem.getExpandedStates():#
+            for successor in problem.getSuccessors(state):
+                (state, action, cost) = successor
+
+                fringe.push((state, action, cost, breadcrumb))
         else:
             return None
 
