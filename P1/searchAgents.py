@@ -371,10 +371,9 @@ def cornersHeuristic(state, problem):
     pos, corners = state
     maxDist = 0
 
-    for x, y in corners:
-        dist = util.manhattanDistance(pos, (x, y))
-        if dist > maxDist:
-            maxDist = dist
+    dists = [util.manhattanDistance(pos, (x, y)) for x, y in corners]
+    if len(dists) > 0:
+        maxDist = max(dists)
     return maxDist
 
 class AStarCornersAgent(SearchAgent):
@@ -511,10 +510,10 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
         closestx, closesty = startPosition
-        mindist = 0
+        mindist = -1
         for x, y in food.asList():
             dist = util.manhattanDistance(startPosition, (x, y)) #mazeDistance(startPosition, (x, y))
-            if mindist == 0 or dist < mindist:
+            if mindist == -1 or dist < mindist:
                 mindist = dist
                 closestx = x
                 closesty = y
